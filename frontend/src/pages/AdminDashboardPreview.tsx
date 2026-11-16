@@ -21,6 +21,9 @@ import {
   Shield,
   Bot,
   User,
+  Radio,
+  ExternalLink,
+  PhoneCall,
 } from 'lucide-react';
 import {
   listIncidents,
@@ -206,16 +209,31 @@ export const AdminDashboardPreview: React.FC<AdminDashboardPreviewProps> = ({ on
             </div>
           </div>
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 flex-shrink-0">
             <button
               onClick={() => {
-                const em = incidents.find((inc) => inc.is_emergency && inc.status !== 'RESOLVED');
-                if (em) handleInspectTicket(em.ticket_number);
+                const em = incidents.find((inc) => inc.is_emergency && inc.status !== 'RESOLVED') || incidents[0];
+                if (em) {
+                  onSelectTicket(em.ticket_number);
+                }
               }}
+              title="Open real-time telemetry and connect with employee"
               className="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow-lg shadow-rose-600/30 flex items-center space-x-2 transition-all active:scale-95 whitespace-nowrap"
             >
-              <Eye className="w-4 h-4" />
+              <Radio className="w-4 h-4 animate-pulse" />
               <span>Inspect & Connect Now</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const em = incidents.find((inc) => inc.is_emergency && inc.status !== 'RESOLVED') || incidents[0];
+                if (em) handleInspectTicket(em.ticket_number);
+              }}
+              title="Inspect technical dossier and AI reasoning"
+              className="px-3 py-2 bg-slate-900 hover:bg-slate-800 text-rose-300 hover:text-white font-semibold text-xs rounded-xl border border-rose-500/30 flex items-center space-x-1.5 transition-all"
+            >
+              <Eye className="w-3.5 h-3.5" />
+              <span>View Dossier</span>
             </button>
           </div>
         </div>
@@ -435,15 +453,28 @@ export const AdminDashboardPreview: React.FC<AdminDashboardPreviewProps> = ({ on
                         {new Date(incident.created_at).toLocaleTimeString()}
                       </td>
                       <td className="py-3.5 px-4 text-right">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleInspectTicket(incident.ticket_number);
-                          }}
-                          className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 group-hover:text-blue-400"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center justify-end space-x-1.5">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onSelectTicket(incident.ticket_number);
+                            }}
+                            title="Connect to live telemetry tracker"
+                            className="p-1.5 rounded-lg bg-blue-950/60 hover:bg-blue-600 text-blue-400 hover:text-white border border-blue-500/30 transition-colors"
+                          >
+                            <Radio className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleInspectTicket(incident.ticket_number);
+                            }}
+                            title="Inspect AI reasoning dossier"
+                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 transition-colors"
+                          >
+                            <Eye className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -472,6 +503,14 @@ export const AdminDashboardPreview: React.FC<AdminDashboardPreviewProps> = ({ on
             </div>
 
             <div className="flex items-center space-x-2">
+              <button
+                onClick={() => onSelectTicket(selectedIncident.ticket_number)}
+                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-xs font-semibold flex items-center space-x-1.5 shadow-md active:scale-95 transition-all"
+              >
+                <Radio className="w-3.5 h-3.5" />
+                <span>Connect & Track Live Telemetry</span>
+              </button>
+
               {selectedIncident.status !== 'RESOLVED' && selectedIncident.status !== 'ESCALATED' && (
                 <div className="flex items-center space-x-2">
                   <input
@@ -496,6 +535,12 @@ export const AdminDashboardPreview: React.FC<AdminDashboardPreviewProps> = ({ on
 
           {/* AI Chronological Timeline Component */}
           <ReasoningTimeline incident={selectedIncident} />
+        </div>
+      )}
+
+      {activeTab === 'deepdive' && !selectedIncident && (
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-500 text-xs">
+          No ticket currently selected. Select any incident from the Operations & Queue tab to inspect.
         </div>
       )}
 

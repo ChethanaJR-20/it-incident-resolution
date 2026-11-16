@@ -433,3 +433,4 @@ export const DiagnosticsLabPage: React.FC = () => {
     </div>
   );
 };
+

@@ -297,3 +297,4 @@ async def reset_environment(device_id: str = "CORP-LAPTOP-042"):
         "active_faults": simulation_engine.get_device_state(device_id)["active_faults"],
         "message": "Endpoint CORP-LAPTOP-042 successfully reset to fault state (Stale DNS, unreachable gateway, stopped service).",
     }
+

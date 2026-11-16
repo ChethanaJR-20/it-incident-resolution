@@ -21,19 +21,29 @@ interface ReasoningTimelineProps {
 export const ReasoningTimeline: React.FC<ReasoningTimelineProps> = ({ incident }) => {
   const events = [];
 
+  const diagnosticResults = incident.diagnostic_results || [];
+  const remediationActions = incident.remediation_actions || [];
+  const approvalRequests = incident.approval_requests || [];
+
   // Event 1: Submission
   events.push({
     title: 'Incident Submitted by Employee',
     actor: 'USER',
-    actorName: 'John Doe (DevOps)',
+    actorName: incident.employee?.full_name ? `${incident.employee.full_name} (${incident.employee.department})` : 'Employee',
     icon: <User className="w-3.5 h-3.5 text-blue-400" />,
     badgeColor: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    timestamp: new Date(incident.created_at).toLocaleTimeString(),
-    details: `Reported from device ${incident.device_id} (${incident.os_type}): "${incident.raw_description}"`,
+    timestamp: incident.created_at ? new Date(incident.created_at).toLocaleTimeString() : 'Now',
+    details: `Reported from device ${incident.device_id || 'Unknown'} (${incident.os_type || 'Windows'}): "${incident.raw_description || 'No description'}"`,
   });
 
   // Event 2: AI Classification
   if (incident.classification) {
+    const symptoms = Array.isArray(incident.classification.extracted_symptoms)
+      ? incident.classification.extracted_symptoms.join(', ')
+      : typeof incident.classification.extracted_symptoms === 'string'
+      ? incident.classification.extracted_symptoms
+      : 'Network unreachable';
+
     events.push({
       title: 'Autonomous AI Triage & Grounding',
       actor: 'AGENT',
@@ -41,12 +51,12 @@ export const ReasoningTimeline: React.FC<ReasoningTimelineProps> = ({ incident }
       icon: <Sparkles className="w-3.5 h-3.5 text-indigo-400" />,
       badgeColor: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
       timestamp: 'T+1.2s',
-      details: `Classified as ${incident.classification.category} (${incident.classification.priority}). Extracted symptoms: ${incident.classification.extracted_symptoms.join(', ')}. Matched SOP-NET-001 runbook.`,
+      details: `Classified as ${incident.classification.category || 'OTHER'} (${incident.classification.priority || 'P3'}). Extracted symptoms: ${symptoms}. Matched SOP runbook.`,
     });
   }
 
   // Event 3: Pre-Remediation Diagnostics
-  const preDiags = incident.diagnostic_results.filter((d) => d.execution_stage === 'PRE_REMEDIATION');
+  const preDiags = diagnosticResults.filter((d) => d.execution_stage === 'PRE_REMEDIATION');
   if (preDiags.length > 0) {
     events.push({
       title: 'Automated Diagnostic Telemetry Probes',
@@ -55,12 +65,12 @@ export const ReasoningTimeline: React.FC<ReasoningTimelineProps> = ({ incident }
       icon: <Activity className="w-3.5 h-3.5 text-rose-400" />,
       badgeColor: 'bg-rose-500/10 text-rose-400 border-rose-500/20',
       timestamp: 'T+3.4s',
-      details: `Executed ${preDiags.length} allowlisted probes: resolve_dns() returned stale IP 10.0.4.1; ping_gateway() reported 100% loss; check_vpn_adapter_status() reported DISCONNECTED.`,
+      details: `Executed ${preDiags.length} allowlisted probes: resolve_dns() returned stale IP; ping_gateway() reported loss; check_vpn_adapter_status() reported status.`,
     });
   }
 
   // Event 4: Safe Remediation Actions
-  const safeRemeds = incident.remediation_actions.filter((r) => r.tool_name === 'flush_dns_cache');
+  const safeRemeds = remediationActions.filter((r) => r.tool_name === 'flush_dns_cache');
   if (safeRemeds.length > 0) {
     events.push({
       title: 'Safe Remediation Tool Execution (Tier 1)',
@@ -69,15 +79,15 @@ export const ReasoningTimeline: React.FC<ReasoningTimelineProps> = ({ incident }
       icon: <Wrench className="w-3.5 h-3.5 text-emerald-400" />,
       badgeColor: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
       timestamp: 'T+4.1s',
-      details: 'Executed flush_dns_cache(). Local resolver cache successfully cleared and re-bound to active gateway 10.0.4.50.',
+      details: 'Executed flush_dns_cache(). Local resolver cache successfully cleared and re-bound to active gateway.',
     });
   }
 
   // Event 5: Human-in-the-Loop Approval
-  const approval = incident.approval_requests[0];
+  const approval = approvalRequests[0];
   if (approval) {
     events.push({
-      title: `Privileged Action Sign-Off: ${approval.action_name}()`,
+      title: `Privileged Action Sign-Off: ${approval.action_name || 'System Action'}()`,
       actor: 'ADMIN',
       actorName: 'IT Administrator',
       icon: <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />,
@@ -88,7 +98,7 @@ export const ReasoningTimeline: React.FC<ReasoningTimelineProps> = ({ incident }
   }
 
   // Event 6: Post-Remediation Verification
-  const postDiags = incident.diagnostic_results.filter((d) => d.execution_stage === 'POST_REMEDIATION');
+  const postDiags = diagnosticResults.filter((d) => d.execution_stage === 'POST_REMEDIATION');
   if (postDiags.length > 0) {
     events.push({
       title: 'Closed-Loop Verification Telemetry',
