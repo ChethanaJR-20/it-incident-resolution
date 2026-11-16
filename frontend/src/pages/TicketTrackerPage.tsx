@@ -23,6 +23,13 @@ import {
   Network,
   Send,
   UserCheck,
+  PhoneCall,
+  PhoneOff,
+  Phone,
+  Mic,
+  MicOff,
+  Volume2,
+  Copy,
 } from 'lucide-react';
 import { getIncident, triggerTriage, runDiagnostics, submitApprovalDecision, getRunbook, triggerEmergencyFastTrack, escalateIncident } from '../services/api';
 import { IncidentDetail } from '../types';
@@ -44,6 +51,43 @@ export const TicketTrackerPage: React.FC<TicketTrackerPageProps> = ({ ticketNumb
   const [showRunbookContent, setShowRunbookContent] = useState(false);
   const [escalatingEmergency, setEscalatingEmergency] = useState(false);
   const [escalatingTier2, setEscalatingTier2] = useState(false);
+  const [isHotlineOpen, setIsHotlineOpen] = useState(false);
+  const [callStatus, setCallStatus] = useState<'RINGING' | 'CONNECTED' | 'ENDED'>('RINGING');
+  const [callDuration, setCallDuration] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const [copiedPhone, setCopiedPhone] = useState(false);
+
+  useEffect(() => {
+    let timer: any;
+    if (isHotlineOpen && callStatus === 'CONNECTED') {
+      timer = setInterval(() => {
+        setCallDuration((prev) => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [isHotlineOpen, callStatus]);
+
+  useEffect(() => {
+    let ringTimer: any;
+    if (isHotlineOpen && callStatus === 'RINGING') {
+      ringTimer = setTimeout(() => {
+        setCallStatus('CONNECTED');
+      }, 2000);
+    }
+    return () => clearTimeout(ringTimer);
+  }, [isHotlineOpen, callStatus]);
+
+  const formatCallTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleCopyHotlineNumber = (num: string) => {
+    navigator.clipboard.writeText(num);
+    setCopiedPhone(true);
+    setTimeout(() => setCopiedPhone(false), 2000);
+  };
 
   const handleManualTier2Escalate = async () => {
     setEscalatingTier2(true);
@@ -311,13 +355,19 @@ export const TicketTrackerPage: React.FC<TicketTrackerPageProps> = ({ ticketNumb
                     <span>{executingDiagnostics ? 'Executing Diagnostics...' : '⚡ Execute Automated Diagnostics'}</span>
                   </button>
                 )}
-                <a
-                  href={`tel:${incident.emergency_contact || '+15550192834'}`}
+                <button
+                  onClick={() => {
+                    setIsHotlineOpen(true);
+                    setCallStatus('RINGING');
+                    setCallDuration(0);
+                    setIsMuted(false);
+                  }}
                   className="px-3.5 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center space-x-1.5 shadow-md shadow-rose-600/30 active:scale-95 transition-all whitespace-nowrap"
+                  title="Direct telephone / softphone dispatch to Lead IT Engineer"
                 >
-                  <Activity className="w-3.5 h-3.5" />
+                  <PhoneCall className="w-3.5 h-3.5 animate-pulse" />
                   <span>Call Emergency Hotline</span>
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -820,6 +870,131 @@ export const TicketTrackerPage: React.FC<TicketTrackerPageProps> = ({ ticketNumb
           </div>
         </div>
       </div>
+
+      {/* Interactive Emergency Hotline Call Modal */}
+      {isHotlineOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn">
+          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl space-y-6 relative overflow-hidden">
+            {/* Background glowing gradients */}
+            <div className="absolute -top-24 -left-24 w-48 h-48 bg-rose-600/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Modal Header */}
+            <div className="flex items-center justify-between relative z-10">
+              <div className="flex items-center space-x-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-rose-400">
+                  Priority P1 Emergency Hotline
+                </span>
+              </div>
+              <button
+                onClick={() => setIsHotlineOpen(false)}
+                className="p-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Engineer Profile Card */}
+            <div className="text-center space-y-3 relative z-10">
+              <div className="relative inline-block">
+                <div className="w-20 h-20 rounded-2xl bg-gradient-to-tr from-rose-600 to-indigo-600 p-0.5 shadow-xl mx-auto flex items-center justify-center">
+                  <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">
+                    <UserCheck className="w-10 h-10 text-white" />
+                  </div>
+                </div>
+                {callStatus === 'CONNECTED' && (
+                  <span className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-emerald-400 ring-4 ring-slate-900" />
+                )}
+              </div>
+
+              <div>
+                <h3 className="text-base font-bold text-white">Sarah Connor</h3>
+                <p className="text-xs text-rose-300 font-medium">Lead IT Rapid Response Engineer</p>
+                <p className="text-[11px] text-slate-400 font-mono mt-0.5">
+                  Direct Line: {incident?.emergency_contact || '+1 (555) 019-2834'}
+                </p>
+              </div>
+
+              {/* Status & Call Timer */}
+              <div className="py-1.5 px-4 rounded-full bg-slate-950/80 border border-slate-800 inline-flex items-center space-x-2 text-xs font-mono">
+                {callStatus === 'RINGING' ? (
+                  <span className="text-amber-400 flex items-center space-x-1.5">
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Ringing Dispatch Desk...</span>
+                  </span>
+                ) : callStatus === 'CONNECTED' ? (
+                  <span className="text-emerald-400 flex items-center space-x-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Connected • {formatCallTime(callDuration)}</span>
+                  </span>
+                ) : (
+                  <span className="text-slate-400">Call Ended</span>
+                )}
+              </div>
+            </div>
+
+            {/* Simulated Live Audio Dispatcher Notes */}
+            <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl space-y-2 relative z-10 text-xs">
+              <div className="flex items-center justify-between text-[10px] font-mono uppercase text-slate-400">
+                <span className="flex items-center space-x-1">
+                  <Volume2 className="w-3 h-3 text-emerald-400" />
+                  <span>Live Dispatch Audio Feed</span>
+                </span>
+                <span>Encrypted HD Audio</span>
+              </div>
+              <p className="text-slate-200 leading-relaxed italic">
+                {callStatus === 'RINGING'
+                  ? '"Routing high-priority emergency call to Senior On-Call Engineer for CORP-LAPTOP-042..."'
+                  : '"Hello! I see your P1 ticket for the upcoming meeting. I have your laptop telemetry open and can execute the VPN driver reset right now while on the line."'}
+              </p>
+            </div>
+
+            {/* Direct Phone Number 1-Click Copy */}
+            <div className="p-3 bg-slate-800/50 border border-slate-800 rounded-xl flex items-center justify-between text-xs relative z-10">
+              <div className="truncate">
+                <span className="text-[10px] text-slate-400 block font-mono">Dial Directly from Phone:</span>
+                <span className="font-mono text-white font-semibold">
+                  {incident?.emergency_contact || '+1 (555) 019-2834'}
+                </span>
+              </div>
+              <button
+                onClick={() => handleCopyHotlineNumber(incident?.emergency_contact || '+15550192834')}
+                className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-[11px] font-medium border border-slate-700 flex items-center space-x-1"
+              >
+                {copiedPhone ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                <span>{copiedPhone ? 'Copied' : 'Copy Number'}</span>
+              </button>
+            </div>
+
+            {/* Call Action Controls */}
+            <div className="flex items-center justify-center space-x-4 pt-2 relative z-10">
+              <button
+                onClick={() => setIsMuted(!isMuted)}
+                className={`p-3 rounded-full border transition-all ${
+                  isMuted
+                    ? 'bg-rose-500/20 border-rose-500/40 text-rose-400'
+                    : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white hover:bg-slate-700'
+                }`}
+                title={isMuted ? 'Unmute' : 'Mute Microphone'}
+              >
+                {isMuted ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+              </button>
+
+              <button
+                onClick={() => {
+                  setCallStatus('ENDED');
+                  setTimeout(() => setIsHotlineOpen(false), 400);
+                }}
+                className="px-6 py-3 rounded-full bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center space-x-2 shadow-lg shadow-rose-600/40 active:scale-95 transition-all"
+              >
+                <PhoneOff className="w-4 h-4" />
+                <span>End Call</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
