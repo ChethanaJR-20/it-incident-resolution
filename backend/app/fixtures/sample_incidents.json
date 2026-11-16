@@ -1,0 +1,168 @@
+[
+  {
+    "id": "INC-01",
+    "category": "VPN",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-042",
+    "os_type": "Windows 11",
+    "raw_description": "AnyConnect says 'Connection failed: Gateway 10.0.4.1 not reachable'. Internet works.",
+    "severity": "HIGH",
+    "expected_root_cause": "Stale DNS gateway record pointing to decommissioned IP",
+    "target_tool": "flush_dns_cache"
+  },
+  {
+    "id": "INC-02",
+    "category": "VPN",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-042",
+    "os_type": "Windows 11",
+    "raw_description": "VPN client won't open. It says 'Virtual adapter driver error 502'.",
+    "severity": "HIGH",
+    "expected_root_cause": "Virtual network adapter disabled or hung",
+    "target_tool": "reset_virtual_adapter"
+  },
+  {
+    "id": "INC-03",
+    "category": "NETWORK",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-088",
+    "os_type": "Windows 11",
+    "raw_description": "I can access google.com but cannot open internal payroll portal at payroll.corp.local.",
+    "severity": "MEDIUM",
+    "expected_root_cause": "Local DNS resolver cache binding conflict",
+    "target_tool": "flush_dns_cache"
+  },
+  {
+    "id": "INC-04",
+    "category": "NETWORK",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-015",
+    "os_type": "macOS Sonoma",
+    "raw_description": "My laptop shows 'No Internet, Secured' on office Wi-Fi network.",
+    "severity": "HIGH",
+    "expected_root_cause": "DHCP lease expired or IP address conflict",
+    "target_tool": "refresh_ip_lease"
+  },
+  {
+    "id": "INC-05",
+    "category": "DNS",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-042",
+    "os_type": "Ubuntu 22.04",
+    "raw_description": "DNS resolution failure when trying to git clone from internal repository code.internal.",
+    "severity": "MEDIUM",
+    "expected_root_cause": "Stale internal nameserver resolution cache",
+    "target_tool": "resolve_dns"
+  },
+  {
+    "id": "INC-06",
+    "category": "AUTH",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-022",
+    "os_type": "Windows 11",
+    "raw_description": "Locked out of my corporate email account after changing password on my mobile phone.",
+    "severity": "HIGH",
+    "expected_root_cause": "Active Directory account lock threshold exceeded",
+    "target_tool": "check_account_lockout"
+  },
+  {
+    "id": "INC-07",
+    "category": "AUTH",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-031",
+    "os_type": "macOS Sonoma",
+    "raw_description": "Single Sign-On says 'SAML assertion token expired' when attempting to login to Salesforce.",
+    "severity": "MEDIUM",
+    "expected_root_cause": "System clock drift or stale browser SSO session cookies",
+    "target_tool": "clear_browser_session"
+  },
+  {
+    "id": "INC-08",
+    "category": "SOFTWARE",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-042",
+    "os_type": "Windows 11",
+    "raw_description": "Docker Desktop won't start; error dialog says 'WSL 2 background service unexpectedly stopped'.",
+    "severity": "LOW",
+    "expected_root_cause": "Local background virtualization service halted",
+    "target_tool": "restart_local_service"
+  },
+  {
+    "id": "INC-09",
+    "category": "SOFTWARE",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-009",
+    "os_type": "Windows 11",
+    "raw_description": "Slack desktop application keeps crashing upon launch with fatal memory exception.",
+    "severity": "LOW",
+    "expected_root_cause": "Corrupted local GPU hardware acceleration cache",
+    "target_tool": "clear_app_cache"
+  },
+  {
+    "id": "INC-10",
+    "category": "APP_ACCESS",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-077",
+    "os_type": "macOS Sonoma",
+    "raw_description": "Receiving 403 Forbidden error trying to access the AWS staging console.",
+    "severity": "MEDIUM",
+    "expected_root_cause": "Missing IAM security group assignment for staging environment",
+    "target_tool": "verify_iam_role"
+  },
+  {
+    "id": "INC-11",
+    "category": "APP_ACCESS",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-042",
+    "os_type": "Windows 11",
+    "raw_description": "Cannot access Jira Service Desk. Browser returns 502 Bad Gateway.",
+    "severity": "CRITICAL",
+    "expected_root_cause": "Upstream reverse proxy outage",
+    "target_tool": "check_service_status"
+  },
+  {
+    "id": "INC-12",
+    "category": "HARDWARE",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-055",
+    "os_type": "Windows 11",
+    "raw_description": "Cannot print to 3rd floor HP LaserJet printer. Documents stuck in queue forever.",
+    "severity": "LOW",
+    "expected_root_cause": "Local Windows print spooler service deadlocked",
+    "target_tool": "restart_print_spooler"
+  },
+  {
+    "id": "INC-13",
+    "category": "HARDWARE",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-011",
+    "os_type": "Windows 11",
+    "raw_description": "External Dell 4K monitor flickers black every 30 seconds over USB-C Thunderbolt cable.",
+    "severity": "LOW",
+    "expected_root_cause": "DisplayLink driver handshake timeout",
+    "target_tool": "reinit_display_driver"
+  },
+  {
+    "id": "INC-14",
+    "category": "SECURITY",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-042",
+    "os_type": "Windows 11",
+    "raw_description": "Endpoint security agent popped up notification stating suspicious file quarantined.",
+    "severity": "CRITICAL",
+    "expected_root_cause": "EDR agent positive detection trigger",
+    "target_tool": "get_edr_telemetry"
+  },
+  {
+    "id": "INC-15",
+    "category": "SYSTEM",
+    "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "device_id": "CORP-LAPTOP-066",
+    "os_type": "Windows 11",
+    "raw_description": "Laptop cooling fan running at maximum speed, system unresponsive when opening IDE.",
+    "severity": "MEDIUM",
+    "expected_root_cause": "Zombie background node process consuming 99% CPU",
+    "target_tool": "kill_zombie_process"
+  }
+]
+

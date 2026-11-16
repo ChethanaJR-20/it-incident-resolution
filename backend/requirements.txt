@@ -1,0 +1,23 @@
+# Core API framework
+fastapi>=0.110.0
+uvicorn[standard]>=0.28.0
+pydantic>=2.6.0
+pydantic-settings>=2.2.0
+
+# Database & ORM
+SQLAlchemy>=2.0.28
+aiosqlite>=0.20.0
+asyncpg>=0.29.0
+greenlet>=3.0.3
+
+# Google GenAI (for Gemini API)
+google-genai>=0.1.1
+
+# HTTP client & utilities
+httpx>=0.27.0
+python-multipart>=0.0.9
+
+# Testing
+pytest>=8.1.0
+pytest-asyncio>=0.23.5
+

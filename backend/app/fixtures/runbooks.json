@@ -1,0 +1,33 @@
+[
+  {
+    "doc_code": "SOP-NET-001",
+    "title": "Corporate AnyConnect VPN Troubleshooting Runbook",
+    "category": "VPN",
+    "allowable_tools": {
+      "diagnostics": ["check_vpn_adapter_status", "resolve_dns", "ping_gateway"],
+      "remediations": ["flush_dns_cache", "reset_virtual_adapter", "restart_vpn_service"]
+    },
+    "content": "# SOP-NET-001: AnyConnect VPN Troubleshooting\n\n## Objective\nResolve corporate VPN gateway connection timeouts, adapter driver initialization errors, and DNS routing conflicts.\n\n## Standard Diagnostic Procedure\n1. Query adapter status via `check_vpn_adapter_status`.\n2. Verify DNS resolution for `vpn.corporate.internal` via `resolve_dns`.\n3. Validate gateway reachable status via `ping_gateway`.\n\n## Failure Conditions & Deductions\n- If resolved IP is `10.0.4.1`, local DNS resolver is stale (active gateway is `10.0.4.50`).\n- If adapter state is `DOWN` or `ERROR_502`, virtual interface driver requires reset.\n\n## Approved Remediation Protocols\n- Stale DNS: Execute `flush_dns_cache` (Safe - Tier 1).\n- Hung Adapter: Execute `reset_virtual_adapter` (Safe - Tier 1).\n- Tunnel Deadlock: Execute `restart_vpn_service` (Privileged - Tier 2, Admin Approval Required).\n\n## Verification Criteria\n- `resolve_dns` returns `10.0.4.50`.\n- `ping_gateway` packet loss is 0%.\n- `check_vpn_adapter_status` returns `CONNECTED`."
+  },
+  {
+    "doc_code": "SOP-DNS-002",
+    "title": "Corporate DNS Resolution & Routing Runbook",
+    "category": "DNS",
+    "allowable_tools": {
+      "diagnostics": ["resolve_dns", "check_network_gateway"],
+      "remediations": ["flush_dns_cache", "refresh_ip_lease"]
+    },
+    "content": "# SOP-DNS-002: Internal DNS Resolution\n\n## Objective\nResolve local hostname resolution failures for corporate intranet, Git servers, and internal web portals.\n\n## Diagnostic Procedure\n1. Check DNS resolution for target internal host using `resolve_dns`.\n2. Query default corporate nameservers.\n\n## Remediation Protocol\n1. Flush local OS resolver cache via `flush_dns_cache`.\n2. If IP allocation is invalid, refresh DHCP lease via `refresh_ip_lease`."
+  },
+  {
+    "doc_code": "SOP-AUTH-003",
+    "title": "Enterprise SSO & Account Lockout Runbook",
+    "category": "AUTH",
+    "allowable_tools": {
+      "diagnostics": ["check_account_lockout", "check_system_clock"],
+      "remediations": ["unlock_corporate_account", "clear_browser_session"]
+    },
+    "content": "# SOP-AUTH-003: Enterprise Authentication Triage\n\n## Objective\nDiagnose and remediate Single Sign-On (SSO) failures, Kerberos ticket expiration, and Active Directory lockouts.\n\n## Diagnostic Procedure\n1. Check Active Directory account state via `check_account_lockout`.\n2. Check local client clock drift against NTP server via `check_system_clock`.\n\n## Remediation Protocol\n1. If account locked: Request Tier-2 authorization to execute `unlock_corporate_account`.\n2. If SAML token corrupted: Execute `clear_browser_session`."
+  }
+]
+
