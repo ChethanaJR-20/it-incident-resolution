@@ -8,10 +8,18 @@ import {
   Menu,
   X,
   ChevronRight,
-  Database
+  Database,
+  Activity,
+  BookOpen
 } from 'lucide-react';
 
-export type ActiveNavView = 'employee-new' | 'copilot' | 'employee-track' | 'admin-queue';
+export type ActiveNavView =
+  | 'employee-new'
+  | 'copilot'
+  | 'employee-track'
+  | 'admin-queue'
+  | 'diagnostics-lab'
+  | 'runbooks';
 
 interface SidebarProps {
   currentView: ActiveNavView;
@@ -52,6 +60,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, act
       icon: CheckCircle2,
       color: 'emerald',
       show: Boolean(activeTicketNumber),
+    },
+    {
+      id: 'diagnostics-lab' as ActiveNavView,
+      label: 'Diagnostics Lab',
+      sublabel: 'Interactive manual probes',
+      icon: Activity,
+      color: 'cyan',
+      badge: 'PROBES',
+      show: true,
+    },
+    {
+      id: 'runbooks' as ActiveNavView,
+      label: 'SOP Runbooks',
+      sublabel: 'Procedures & guardrails',
+      icon: BookOpen,
+      color: 'amber',
+      show: true,
     },
     {
       id: 'admin-queue' as ActiveNavView,
@@ -147,6 +172,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, act
                   activeClasses = 'bg-indigo-600 text-white shadow-md shadow-indigo-600/20';
                 } else if (item.id === 'employee-track') {
                   activeClasses = 'bg-emerald-600 text-white shadow-md shadow-emerald-600/20';
+                } else if (item.id === 'diagnostics-lab') {
+                  activeClasses = 'bg-cyan-600 text-white shadow-md shadow-cyan-600/20';
+                } else if (item.id === 'runbooks') {
+                  activeClasses = 'bg-amber-600 text-white shadow-md shadow-amber-600/20';
                 }
 
                 return (

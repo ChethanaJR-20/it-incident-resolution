@@ -7,6 +7,8 @@ import { IncidentForm } from './components/IncidentForm';
 import { TicketTrackerPage } from './pages/TicketTrackerPage';
 import { AdminDashboardPreview } from './pages/AdminDashboardPreview';
 import { CopilotPage } from './pages/CopilotPage';
+import { DiagnosticsLabPage } from './pages/DiagnosticsLabPage';
+import { RunbooksPage } from './pages/RunbooksPage';
 import { IncidentDetail } from './types';
 
 const MainApp: React.FC = () => {
@@ -50,6 +52,8 @@ const MainApp: React.FC = () => {
                 {currentView === 'employee-new' && 'Report Incident'}
                 {currentView === 'copilot' && 'AI IT Copilot Guide'}
                 {currentView === 'employee-track' && (activeTicket ? `Ticket ${activeTicket}` : 'Track Incident')}
+                {currentView === 'diagnostics-lab' && 'Diagnostics Lab & Manual Troubleshooting'}
+                {currentView === 'runbooks' && 'Enterprise SOP Runbooks Knowledge Base'}
                 {currentView === 'admin-queue' && 'IT Admin Operations Dashboard'}
               </span>
             </div>
@@ -85,6 +89,10 @@ const MainApp: React.FC = () => {
               onBackToNew={() => setCurrentView('employee-new')}
             />
           )}
+
+          {currentView === 'diagnostics-lab' && <DiagnosticsLabPage />}
+
+          {currentView === 'runbooks' && <RunbooksPage />}
 
           {currentView === 'admin-queue' && (
             <AdminDashboardPreview onSelectTicket={handleSelectTicketFromAdmin} />

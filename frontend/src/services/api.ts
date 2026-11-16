@@ -247,3 +247,65 @@ export async function getDemoAccounts(): Promise<any[]> {
   }
   return response.json();
 }
+
+// ==============================================================================
+// Diagnostics Lab & SOP Runbooks APIs
+// ==============================================================================
+
+export async function getDiagnosticsProbes(): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/diagnostics/probes`);
+  if (!response.ok) {
+    throw new Error('Failed to load diagnostic probes catalog');
+  }
+  return response.json();
+}
+
+export async function executeDiagnosticProbe(payload: {
+  probe_id: string;
+  target?: string;
+  device_id?: string;
+}): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/diagnostics/execute`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to execute diagnostic probe');
+  }
+  return response.json();
+}
+
+export async function executeRemediationAction(payload: {
+  remediation_id: string;
+  device_id?: string;
+}): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/diagnostics/remediate`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to apply remediation action');
+  }
+  return response.json();
+}
+
+export async function resetDiagnosticsEnvironment(deviceId = 'CORP-LAPTOP-042'): Promise<any> {
+  const response = await fetch(`${API_BASE_URL}/diagnostics/reset-environment?device_id=${deviceId}`, {
+    method: 'POST',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to reset simulation environment');
+  }
+  return response.json();
+}
+
+export async function getRunbooks(): Promise<any[]> {
+  const response = await fetch(`${API_BASE_URL}/runbooks/`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch SOP runbooks');
+  }
+  return response.json();
+}
+
