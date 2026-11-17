@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShieldAlert, Lock, UserCheck, ArrowRight } from 'lucide-react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Sidebar, ActiveNavView } from './components/Sidebar';
@@ -13,9 +13,20 @@ import { RunbooksPage } from './pages/RunbooksPage';
 import { IncidentDetail } from './types';
 
 const MainApp: React.FC = () => {
-  const [currentView, setCurrentView] = useState<ActiveNavView>('employee-new');
-  const [activeTicket, setActiveTicket] = useState<string | null>(null);
   const { user, isAuthModalOpen, closeAuthModal, quickLogin } = useAuth();
+  const [currentView, setCurrentView] = useState<ActiveNavView>(() => {
+    return user?.role === 'ADMIN' ? 'admin-queue' : 'employee-new';
+  });
+  const [activeTicket, setActiveTicket] = useState<string | null>(null);
+
+  // Automatically adapt default landing view when user switches role
+  useEffect(() => {
+    if (user?.role === 'ADMIN' && currentView === 'employee-new') {
+      setCurrentView('admin-queue');
+    } else if (user?.role === 'EMPLOYEE' && currentView === 'admin-queue') {
+      setCurrentView('employee-new');
+    }
+  }, [user?.role]);
 
   const handleIncidentSubmitted = (incident: IncidentDetail) => {
     setActiveTicket(incident.ticket_number);
@@ -50,12 +61,12 @@ const MainApp: React.FC = () => {
               <span className="text-slate-500">Enterprise IT Operations</span>
               <span className="text-slate-700">/</span>
               <span className="text-slate-200 font-semibold">
-                {currentView === 'employee-new' && 'Report Incident'}
+                {currentView === 'employee-new' && (user?.role === 'ADMIN' ? 'Log Incident (On Behalf of Employee)' : 'Report Incident')}
                 {currentView === 'copilot' && 'AI IT Copilot Guide'}
                 {currentView === 'employee-track' && (activeTicket ? `Ticket ${activeTicket}` : 'Track Incident')}
                 {currentView === 'diagnostics-lab' && 'Diagnostics Lab & Manual Troubleshooting'}
                 {currentView === 'runbooks' && 'Enterprise SOP Runbooks Knowledge Base'}
-                {currentView === 'admin-queue' && 'IT Admin Operations Dashboard'}
+                {currentView === 'admin-queue' && 'Operations Command Center (IT Lead)'}
               </span>
             </div>
           </div>

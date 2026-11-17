@@ -102,13 +102,15 @@ export const IncidentForm: React.FC<IncidentFormProps> = ({ onIncidentSubmitted,
       <div className="text-center space-y-2">
         <div className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
           <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-          <span>Autonomous IT Support Intake</span>
+          <span>{user?.role === 'ADMIN' ? 'IT Dispatcher & Walk-Up Desk' : 'Autonomous IT Support Intake'}</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          Report an IT Incident
+          {user?.role === 'ADMIN' ? 'Log Incident (On Behalf of Employee)' : 'Report an IT Incident'}
         </h2>
         <p className="text-sm text-slate-400 max-w-xl mx-auto">
-          Describe what is happening in plain English. Our autonomous agent will inspect device telemetry, match official runbooks, and begin diagnosis immediately.
+          {user?.role === 'ADMIN'
+            ? 'IT Dispatch Desk: Log an incident reported by an employee via emergency hotline or walk-up desk for automated triage.'
+            : 'Describe what is happening in plain English. Our autonomous agent will inspect device telemetry, match official runbooks, and begin diagnosis immediately.'}
         </p>
       </div>
 

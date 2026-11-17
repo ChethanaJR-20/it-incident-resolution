@@ -39,65 +39,118 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, act
     setMobileOpen(false);
   };
 
-  const navItems = [
-    {
-      id: 'employee-new' as ActiveNavView,
-      label: 'Report Incident',
-      sublabel: 'Submit & autonomous triage',
-      icon: ShieldCheck,
-      color: 'blue',
-      show: true,
-    },
-    {
-      id: 'copilot' as ActiveNavView,
-      label: 'AI IT Copilot',
-      sublabel: 'Step-by-step laptop guide',
-      icon: Sparkles,
-      color: 'purple',
-      badge: 'NEW',
-      show: true,
-    },
-    {
-      id: 'employee-track' as ActiveNavView,
-      label: activeTicketNumber ? `Track ${activeTicketNumber}` : 'Track Incident',
-      sublabel: 'Live diagnostic telemetry',
-      icon: CheckCircle2,
-      color: 'emerald',
-      show: Boolean(activeTicketNumber),
-    },
-    {
-      id: 'diagnostics-lab' as ActiveNavView,
-      label: 'Diagnostics Lab',
-      sublabel: 'Interactive manual probes',
-      icon: Activity,
-      color: 'cyan',
-      badge: 'PROBES',
-      show: true,
-    },
-    {
-      id: 'runbooks' as ActiveNavView,
-      label: 'SOP Runbooks',
-      sublabel: 'Procedures & guardrails',
-      icon: BookOpen,
-      color: 'amber',
-      show: true,
-    },
-    {
-      id: 'admin-queue' as ActiveNavView,
-      label: 'IT Admin Dashboard',
-      sublabel: isAdmin ? 'Queue, SOPs & Autopilot' : 'Restricted (Admin Only)',
-      icon: isAdmin ? LayoutDashboard : Lock,
-      color: isAdmin ? 'indigo' : 'slate',
-      badge: isAdmin ? undefined : 'RESTRICTED',
-      show: true,
-    },
-  ];
+  const navItems = isAdmin
+    ? [
+        {
+          id: 'admin-queue' as ActiveNavView,
+          label: 'Operations Command Center',
+          sublabel: 'Queue, Approvals & Autopilot',
+          icon: LayoutDashboard,
+          color: 'indigo',
+          badge: 'ACTIVE DESK',
+          show: true,
+        },
+        {
+          id: 'diagnostics-lab' as ActiveNavView,
+          label: 'System Diagnostics Lab',
+          sublabel: 'Interactive hardware probes',
+          icon: Activity,
+          color: 'cyan',
+          badge: 'PROBES',
+          show: true,
+        },
+        {
+          id: 'runbooks' as ActiveNavView,
+          label: 'SOP Runbooks',
+          sublabel: 'Certified tools & boundaries',
+          icon: BookOpen,
+          color: 'amber',
+          show: true,
+        },
+        {
+          id: 'copilot' as ActiveNavView,
+          label: 'AI IT Copilot',
+          sublabel: 'Interactive triage assistant',
+          icon: Sparkles,
+          color: 'purple',
+          show: true,
+        },
+        {
+          id: 'employee-track' as ActiveNavView,
+          label: activeTicketNumber ? `Inspect ${activeTicketNumber}` : 'Inspect Incident',
+          sublabel: 'Live diagnostic telemetry',
+          icon: CheckCircle2,
+          color: 'emerald',
+          show: Boolean(activeTicketNumber),
+        },
+        {
+          id: 'employee-new' as ActiveNavView,
+          label: 'Log Ticket (On-Behalf)',
+          sublabel: 'Dispatch walk-up incident',
+          icon: ShieldCheck,
+          color: 'blue',
+          show: true,
+        },
+      ]
+    : [
+        {
+          id: 'employee-new' as ActiveNavView,
+          label: 'Report Incident',
+          sublabel: 'Submit & autonomous triage',
+          icon: ShieldCheck,
+          color: 'blue',
+          show: true,
+        },
+        {
+          id: 'copilot' as ActiveNavView,
+          label: 'AI IT Copilot',
+          sublabel: 'Step-by-step laptop guide',
+          icon: Sparkles,
+          color: 'purple',
+          badge: 'NEW',
+          show: true,
+        },
+        {
+          id: 'employee-track' as ActiveNavView,
+          label: activeTicketNumber ? `Track ${activeTicketNumber}` : 'Track Incident',
+          sublabel: 'Live diagnostic telemetry',
+          icon: CheckCircle2,
+          color: 'emerald',
+          show: Boolean(activeTicketNumber),
+        },
+        {
+          id: 'diagnostics-lab' as ActiveNavView,
+          label: 'Diagnostics Lab',
+          sublabel: 'Self-service laptop check',
+          icon: Activity,
+          color: 'cyan',
+          badge: 'PROBES',
+          show: true,
+        },
+        {
+          id: 'runbooks' as ActiveNavView,
+          label: 'SOP Runbooks',
+          sublabel: 'Procedures & guardrails',
+          icon: BookOpen,
+          color: 'amber',
+          show: true,
+        },
+        {
+          id: 'admin-queue' as ActiveNavView,
+          label: 'IT Admin Dashboard',
+          sublabel: 'Restricted (Admin Only)',
+          icon: Lock,
+          color: 'slate',
+          badge: 'RESTRICTED',
+          show: true,
+        },
+      ];
 
   return (
     <>
       {/* Mobile Top Header (only visible on small screens < md) */}
       <div className="md:hidden bg-slate-900 border-b border-slate-800 px-4 py-3 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center space-x-2.5" onClick={() => handleNavClick('employee-new')}>
+        <div className="flex items-center space-x-2.5" onClick={() => handleNavClick(isAdmin ? 'admin-queue' : 'employee-new')}>
           <div className="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
             <Terminal className="w-4 h-4" />
           </div>
@@ -134,7 +187,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, act
         <div className="p-5 border-b border-slate-800/90">
           <div
             className="flex items-start space-x-3 cursor-pointer group"
-            onClick={() => handleNavClick('employee-new')}
+            onClick={() => handleNavClick(isAdmin ? 'admin-queue' : 'employee-new')}
           >
             <div className="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 flex-shrink-0 group-hover:border-blue-400/50 transition-colors shadow-sm shadow-blue-500/10">
               <Terminal className="w-5 h-5" />
