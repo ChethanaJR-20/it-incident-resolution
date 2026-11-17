@@ -10,8 +10,10 @@ import {
   ChevronRight,
   Database,
   Activity,
-  BookOpen
+  BookOpen,
+  Lock,
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export type ActiveNavView =
   | 'employee-new'
@@ -29,6 +31,8 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, activeTicketNumber }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN';
 
   const handleNavClick = (view: ActiveNavView) => {
     onViewChange(view);
@@ -81,9 +85,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentView, onViewChange, act
     {
       id: 'admin-queue' as ActiveNavView,
       label: 'IT Admin Dashboard',
-      sublabel: 'Queue, SOPs & Autopilot',
-      icon: LayoutDashboard,
-      color: 'indigo',
+      sublabel: isAdmin ? 'Queue, SOPs & Autopilot' : 'Restricted (Admin Only)',
+      icon: isAdmin ? LayoutDashboard : Lock,
+      color: isAdmin ? 'indigo' : 'slate',
+      badge: isAdmin ? undefined : 'RESTRICTED',
       show: true,
     },
   ];
