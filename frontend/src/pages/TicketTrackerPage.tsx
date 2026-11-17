@@ -34,6 +34,7 @@ import {
 import { getIncident, triggerTriage, runDiagnostics, submitApprovalDecision, getRunbook, triggerEmergencyFastTrack, escalateIncident } from '../services/api';
 import { IncidentDetail } from '../types';
 import { useAuth } from '../context/AuthContext';
+import { RunbookInspector } from '../components/RunbookInspector';
 
 interface TicketTrackerPageProps {
   ticketNumber: string;
@@ -799,8 +800,8 @@ export const TicketTrackerPage: React.FC<TicketTrackerPageProps> = ({ ticketNumb
               </div>
 
               {showRunbookContent && (
-                <div className="mt-3 p-4 bg-slate-950 rounded-lg border border-slate-800 text-xs font-mono text-slate-300 whitespace-pre-wrap leading-relaxed max-h-60 overflow-y-auto">
-                  {runbook.content}
+                <div className="mt-4 pt-2 border-t border-slate-800">
+                  <RunbookInspector runbook={runbook} compact={true} />
                 </div>
               )}
             </div>

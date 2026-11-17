@@ -15,6 +15,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 import { getRunbooks } from '../services/api';
+import { RunbookInspector } from '../components/RunbookInspector';
 
 export const RunbooksPage: React.FC = () => {
   const [runbooks, setRunbooks] = useState<any[]>([]);
@@ -182,57 +183,8 @@ export const RunbooksPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Allowable Tools Permissions Matrix */}
-              <div className="p-4 bg-slate-950/70 border border-slate-800 rounded-xl space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono uppercase font-semibold text-slate-300 flex items-center space-x-1.5">
-                    <Wrench className="w-3.5 h-3.5 text-blue-400" />
-                    <span>Authorized Automated Tools Matrix</span>
-                  </span>
-                  <span className="text-[10px] text-slate-500">Security Boundary</span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  {Object.entries(selectedRunbook.allowable_tools || {}).map(([toolName, level]: [string, any]) => {
-                    const isSafe = level === 'SAFE' || level === 'READ_ONLY' || level === 'DIAGNOSTIC';
-                    return (
-                      <div
-                        key={toolName}
-                        className="p-2.5 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between"
-                      >
-                        <span className="text-xs font-mono text-slate-200">{toolName}</span>
-                        <span
-                          className={`text-[9px] font-mono px-2 py-0.5 rounded uppercase font-bold ${
-                            isSafe
-                              ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                              : 'bg-amber-500/10 text-amber-400 border border-amber-500/30'
-                          }`}
-                        >
-                          {String(level)}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Full Document Content */}
-              <div className="space-y-3">
-                <div className="text-xs font-mono uppercase font-semibold text-slate-400">
-                  Official Standard Operating Procedure Content
-                </div>
-                <div className="p-5 bg-slate-950 border border-slate-800/90 rounded-xl text-slate-300 text-xs leading-relaxed font-sans whitespace-pre-line space-y-4 max-h-[500px] overflow-y-auto">
-                  {selectedRunbook.content}
-                </div>
-              </div>
-
-              {/* Security Boundary Note */}
-              <div className="p-3 bg-blue-950/20 border border-blue-500/20 rounded-xl flex items-start space-x-2 text-xs text-blue-300">
-                <Shield className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
-                <p>
-                  <strong>Autonomous Boundary:</strong> The AI Agent can only perform actions listed in this runbook. If a resolution requires an unlisted tool, the agent must escalate the ticket to Tier-2 human engineering.
-                </p>
-              </div>
+              {/* Rich Interactive Runbook Inspector with Plain Language & Technical Views */}
+              <RunbookInspector runbook={selectedRunbook} />
             </div>
           ) : (
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-500">
