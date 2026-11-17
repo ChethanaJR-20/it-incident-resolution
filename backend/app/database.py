@@ -15,15 +15,27 @@ from app.config import settings
 # Engine configuration
 connect_args = {}
 db_url = getattr(settings, "async_database_url", settings.DATABASE_URL)
+
+engine_kwargs = {
+    "echo": False,
+    "future": True,
+}
+
 if db_url.startswith("sqlite"):
     connect_args["check_same_thread"] = False
     connect_args["timeout"] = 30.0
+    engine_kwargs["connect_args"] = connect_args
+else:
+    engine_kwargs["connect_args"] = connect_args
+    # Reconnect automatically when idle connections drop or timeout on cloud pooler
+    engine_kwargs["pool_pre_ping"] = True
+    engine_kwargs["pool_recycle"] = 300
+    engine_kwargs["pool_size"] = 10
+    engine_kwargs["max_overflow"] = 20
 
 engine = create_async_engine(
     db_url,
-    echo=False,
-    connect_args=connect_args,
-    future=True,
+    **engine_kwargs,
 )
 
 AsyncSessionLocal = async_sessionmaker(

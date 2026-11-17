@@ -130,7 +130,6 @@ class IncidentService:
         session.add(notification)
 
         await session.commit()
-        await session.refresh(incident)
         return incident
 
     @staticmethod
